@@ -136,10 +136,43 @@
     background:
       radial-gradient(ellipse 900px 600px at 78% 30%, rgba(63,125,255,0.35), transparent 60%),
       linear-gradient(160deg, var(--navy-900) 0%, var(--blue-900) 45%, var(--blue-600) 100%);
+    background-size:220% 220%, 220% 220%;
+    background-position:0% 0%, 0% 0%;
+    animation:heroDrift 24s ease-in-out infinite alternate;
     overflow:hidden;
     padding:96px 0 150px;
   }
-  .hero-decor{position:absolute;inset:0;pointer-events:none;opacity:0.55;}
+  @keyframes heroDrift{
+    0%{background-position:0% 0%, 0% 0%;}
+    50%{background-position:60% 30%, 40% 70%;}
+    100%{background-position:100% 60%, 80% 20%;}
+  }
+  .hero::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    z-index:1;
+    background:linear-gradient(115deg,
+      rgba(255,88,120,0.32), rgba(255,196,74,0.3), rgba(120,235,190,0.3),
+      rgba(90,150,255,0.34), rgba(200,110,255,0.32), rgba(255,88,120,0.32),
+      rgba(255,196,74,0.3), rgba(90,150,255,0.34));
+    background-size:400% 400%;
+    mix-blend-mode:overlay;
+    opacity:0.75;
+    animation:holoShift 13s ease-in-out infinite, holoHue 9s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes holoShift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+  @keyframes holoHue{
+    0%{filter:hue-rotate(0deg) saturate(140%);}
+    50%{filter:hue-rotate(180deg) saturate(170%);}
+    100%{filter:hue-rotate(360deg) saturate(140%);}
+  }
+  .hero-decor{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0.55;}
   .hero-inner{
     position:relative;
     z-index:2;
@@ -182,11 +215,27 @@
   .btn-primary:hover{transform:translateY(-2px);background:var(--blue-400);}
   .seal-wrap{
     position:relative;
+    z-index:2;
     display:flex;
     align-items:center;
     justify-content:center;
   }
+  .seal-wrap::before{
+    content:'';
+    position:absolute;
+    inset:-6%;
+    border-radius:50%;
+    background:conic-gradient(from 0deg,
+      #ff5f7e, #ffc371, #4be3b3, #3f7dff, #b06cff, #ff5f7e);
+    filter:blur(46px) saturate(160%);
+    opacity:0.55;
+    z-index:0;
+    animation:holoSpin 14s linear infinite;
+    transform-origin:center center;
+  }
   .seal{
+    position:relative;
+    z-index:1;
     width:100%;
     max-width:440px;
     aspect-ratio:1/1;
@@ -194,6 +243,19 @@
     object-fit:cover;
     border:3px solid rgba(255,255,255,0.85);
     filter:drop-shadow(0 0 60px rgba(63,125,255,0.55));
+    animation:floatY 5.5s ease-in-out infinite;
+  }
+  @keyframes holoSpin{
+    0%{transform:rotate(0deg) translate(0, 0) scale(1);}
+    20%{transform:rotate(72deg) translate(14px, -10px) scale(1.08);}
+    40%{transform:rotate(144deg) translate(-10px, 12px) scale(0.94);}
+    60%{transform:rotate(216deg) translate(-16px, -8px) scale(1.05);}
+    80%{transform:rotate(288deg) translate(8px, 14px) scale(0.96);}
+    100%{transform:rotate(360deg) translate(0, 0) scale(1);}
+  }
+  @keyframes floatY{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-18px);}
   }
 
   /* floating math glyphs */
@@ -642,15 +704,18 @@
     border:1px solid var(--line);
     border-radius:12px;
     padding:22px 22px 20px;
-    display:flex;
-    align-items:center;
-    gap:16px;
+    cursor:pointer;
     transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   }
   .officer-card:hover{
     transform:translateY(-3px);
     box-shadow:0 14px 28px rgba(20,35,80,0.08);
     border-color:var(--blue-300);
+  }
+  .officer-top{
+    display:flex;
+    align-items:center;
+    gap:16px;
   }
   .officer-avatar{
     flex-shrink:0;
@@ -679,6 +744,79 @@
     font-weight:700;
     color:var(--ink);
   }
+  .officer-chevron{
+    flex-shrink:0;
+    margin-left:auto;
+    color:var(--slate);
+    transition:transform .3s ease;
+  }
+  .officer-more{
+    display:grid;
+    grid-template-rows:0fr;
+    opacity:0;
+    transition:grid-template-rows .35s ease, opacity .25s ease, margin-top .35s ease;
+  }
+  .officer-more-inner{
+    overflow:hidden;
+    min-height:0;
+  }
+  .officer-card.expanded .officer-more,
+  .exec-card.expanded .officer-more,
+  .pio-row.expanded .officer-more{
+    grid-template-rows:1fr;
+    opacity:1;
+    margin-top:16px;
+  }
+  .officer-card.expanded .officer-chevron,
+  .exec-card.expanded .officer-chevron,
+  .pio-row.expanded .officer-chevron{
+    transform:rotate(180deg);
+  }
+  .officer-more p{
+    font-size:13px;
+    color:var(--slate);
+    line-height:1.6;
+    padding-top:2px;
+  }
+  .officer-more p strong{color:var(--ink);}
+  .officer-contact{
+    display:inline-block;
+    margin-top:8px;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--blue-600);
+  }
+  .officer-contact:hover{color:var(--blue-400);}
+  .officer-photo-frame{
+    position:relative;
+    width:84px;
+    height:84px;
+    padding:4px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:0 6px 14px rgba(20,35,80,0.1);
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .officer-photo-fallback{
+    position:absolute;
+    inset:4px;
+    border-radius:10px;
+    background:var(--paper);
+    color:var(--blue-300);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .officer-photo{
+    position:relative;
+    display:block;
+    width:100%;
+    height:100%;
+    border-radius:10px;
+    object-fit:cover;
+  }
   .exec-grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
@@ -691,6 +829,12 @@
     padding:26px 24px;
     position:relative;
     overflow:hidden;
+    cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .exec-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(5,11,31,0.3);
   }
   .exec-card::after{
     content:'';
@@ -708,6 +852,20 @@
     color:var(--blue-300);
     position:relative;
   }
+  .exec-card .officer-chevron{color:var(--blue-300);position:relative;}
+  .exec-card .officer-more p{color:#c7d1ea;}
+  .exec-card .officer-more p strong{color:var(--white);}
+  .exec-card .officer-contact{color:var(--blue-300);}
+  .exec-card .officer-contact:hover{color:var(--white);}
+  .exec-card .officer-photo-frame{
+    background:rgba(255,255,255,0.08);
+    border-color:rgba(127,176,255,0.35);
+    box-shadow:0 6px 14px rgba(5,11,31,0.3);
+  }
+  .exec-card .officer-photo-fallback{
+    background:rgba(63,125,255,0.14);
+    color:var(--blue-300);
+  }
   .pio-list{
     display:grid;
     grid-template-columns:repeat(3,1fr);
@@ -718,6 +876,15 @@
     border:1px solid var(--line);
     border-radius:10px;
     padding:16px 18px;
+    cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .pio-row:hover{
+    transform:translateY(-3px);
+    box-shadow:0 14px 28px rgba(20,35,80,0.08);
+    border-color:var(--blue-300);
+  }
+  .pio-top{
     display:flex;
     align-items:center;
     justify-content:space-between;
@@ -738,7 +905,9 @@
     font-size:14.5px;
     font-weight:700;
     color:var(--ink);
+    flex:1;
     text-align:right;
+    padding-right:4px;
   }
 
   /* ================= FOOTER ================= */
@@ -811,11 +980,11 @@
     .events-head{flex-direction:column;align-items:flex-start;gap:14px;}
     .exec-grid, .officer-grid, .pio-list{grid-template-columns:1fr;}
     .pio-name{text-align:left;}
-    .pio-row{flex-direction:column;align-items:flex-start;}
+    .pio-top{flex-direction:column;align-items:flex-start;}
   }
 
   @media (prefers-reduced-motion: reduce){
-    *{transition:none !important;scroll-behavior:auto !important;}
+    *{transition:none !important;scroll-behavior:auto !important;animation:none !important;}
   }
 </style>
 </head>
@@ -838,12 +1007,12 @@
       <a href="#about">About Us</a>
       <a href="#events">Events</a>
       <a href="#studypacks">Study Packs</a>
-      <a href="Merchandise.html">Merchandise</a>
+      <a href="merchandise.html">Merchandise</a>
       <a href="#members">Members</a>
       <span class="nav-underline" id="navUnderline"></span>
     </nav>
 
-    <a href="#members" class="join-btn">Join Us</a>
+    <a href="https://www.facebook.com/USJREMS" class="join-btn">Join Us</a>
   </div>
 </header>
 
@@ -899,7 +1068,7 @@
       <a href="#about" class="btn-primary">Learn More</a>
     </div>
     <div class="seal-wrap">
-      <img src="pretzel.jpg" alt="Engineering Mathematical Society seal" class="seal">
+      <img src="EMSPHOTO.jpg" alt="Engineering Mathematical Society seal" class="seal">
     </div>
   </div>
 </section>
@@ -963,7 +1132,7 @@
         </div>
         <div>
           <h4>Math Workshop</h4>
-          <span>PUHON MAYNG LAWAS</span>
+          <span>Every Saturday</span>
         </div>
       </div>
       <div class="event-card">
@@ -972,16 +1141,7 @@
         </div>
         <div>
           <h4>Math Quiz Bee</h4>
-          <span>PUHON MAYNG LAWAS</span>
-        </div>
-      </div>
-      <div class="event-card">
-        <div class="event-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M4 20c0-3 2.2-5 5-5s5 2 5 5"/><circle cx="17" cy="9" r="2.4"/><path d="M14.5 20c0-2.4 1.6-4.2 4-4.4"/></svg>
-        </div>
-        <div>
-          <h4>Seminar Series</h4>
-          <span>PUHON MAYNG LAWAS</span>
+          <span>July 20, 2026</span>
         </div>
       </div>
     </div>
@@ -1541,7 +1701,7 @@
     <div class="members-head">
       <span class="section-label">A.Y. 2026 &ndash; 2027</span>
       <h2>Meet the <span class="hl">Officers</span></h2>
-      <p>The students leading the Engineering Mathematical Society this year &mdash; across the Executive, Academic Affairs, Souvenir &amp; Program, Merchandising, and Ways &amp; Means committees, plus our Public Information Officers from every program.</p>
+      <p>The students leading the Engineering Mathematical Society this year &mdash; across the Executive, Academic Affairs, Souvenir &amp; Program, Merchandising, and Ways &amp; Means committees, plus our Public Information Officers from every program. Tap an officer to learn more.</p>
     </div>
 
     <div class="committee-block">
@@ -1550,35 +1710,118 @@
         <span class="committee-count">6 Officers</span>
       </div>
       <div class="exec-grid">
-        <div class="exec-card">
-          <div class="officer-avatar">C</div>
-          <div class="officer-role">President</div>
-          <div class="officer-name">Calderon</div>
+        <div class="exec-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">C</div>
+            <div>
+              <div class="officer-role">President</div>
+              <div class="officer-name">Calderon</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/calderon.jpg" alt="Calderon"></div>
+            <p><strong>Full Name:</strong> Emanuel Jess V. Calderon</p>
+            <p><strong>Course & Year:</strong> BSCpE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="exec-card">
-          <div class="officer-avatar">M</div>
-          <div class="officer-role">Vice President</div>
-          <div class="officer-name">Mayol</div>
+        <div class="exec-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">M</div>
+            <div>
+              <div class="officer-role">Vice President</div>
+              <div class="officer-name">Mayol</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/mayol.jpg" alt="Mayol"></div>
+            <p><strong>Full Name:</strong> Michael Lorenz E. Mayol</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="exec-card">
-          <div class="officer-avatar">R</div>
-          <div class="officer-role">Secretary</div>
-          <div class="officer-name">Romano</div>
+        <div class="exec-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">R</div>
+            <div>
+              <div class="officer-role">Secretary</div>
+              <div class="officer-name">Romano</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/romano.jpg" alt="Romano"></div>
+            <p><strong>Full Name:</strong> Daphney Mae A. Romano</p>
+            <p><strong>Course & Year:</strong> BSME - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="exec-card">
-          <div class="officer-avatar">C</div>
-          <div class="officer-role">Assistant Secretary</div>
-          <div class="officer-name">Caballero</div>
+        <div class="exec-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">C</div>
+            <div>
+              <div class="officer-role">Assistant Secretary</div>
+              <div class="officer-name">Caballero</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/caballero.jpg" alt="Caballero"></div>
+            <p><strong>Full Name:</strong>Shai Ann C. Caballero</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="exec-card">
-          <div class="officer-avatar">D</div>
-          <div class="officer-role">Treasurer</div>
-          <div class="officer-name">Dupal-ag</div>
+        <div class="exec-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">D</div>
+            <div>
+              <div class="officer-role">Treasurer</div>
+              <div class="officer-name">Dupal-ag</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/dupal-ag.jpg" alt="Dupal-ag"></div>
+            <p><strong>Full Name:</strong> Joan Gyps C. Dupal-ag</p>
+            <p><strong>Course & Year:</strong> BSME - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="exec-card">
-          <div class="officer-avatar">F</div>
-          <div class="officer-role">Auditor</div>
-          <div class="officer-name">Fuentes</div>
+        <div class="exec-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">F</div>
+            <div>
+              <div class="officer-role">Auditor</div>
+              <div class="officer-name">Fuentes</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/fuentes.jpg" alt="Fuentes"></div>
+            <p><strong>Full Name:</strong> Nicole S. Fuentes</p>
+            <p><strong>Course & Year:</strong> BSIE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1589,25 +1832,61 @@
         <span class="committee-count">3 Officers</span>
       </div>
       <div class="officer-grid">
-        <div class="officer-card">
-          <div class="officer-avatar">C</div>
-          <div>
-            <div class="officer-role">Chairman</div>
-            <div class="officer-name">Clarin</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">C</div>
+            <div>
+              <div class="officer-role">Chairman</div>
+              <div class="officer-name">Clarin</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/clarin.jpg" alt="Clarin"></div>
+            <p><strong>Full Name:</strong> Czarina T. Clarin</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
-        <div class="officer-card">
-          <div class="officer-avatar">G</div>
-          <div>
-            <div class="officer-role">Vice Chairman</div>
-            <div class="officer-name">Garcia</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">G</div>
+            <div>
+              <div class="officer-role">Vice Chairman</div>
+              <div class="officer-name">Garcia</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/garcia.jpg" alt="Garcia"></div>
+            <p><strong>Full Name:</strong> Gerald Glen L. Garcia</p>
+            <p><strong>Course & Year:</strong> BSME - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
-        <div class="officer-card">
-          <div class="officer-avatar">M</div>
-          <div>
-            <div class="officer-role">Supervisor</div>
-            <div class="officer-name">Maglasang</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">M</div>
+            <div>
+              <div class="officer-role">Supervisor</div>
+              <div class="officer-name">Maglasang</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/maglasang.jpg" alt="Maglasang"></div>
+            <p><strong>Full Name:</strong> Trishia J. Maglasang</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
       </div>
@@ -1619,18 +1898,42 @@
         <span class="committee-count">2 Officers</span>
       </div>
       <div class="officer-grid">
-        <div class="officer-card">
-          <div class="officer-avatar">P</div>
-          <div>
-            <div class="officer-role">Chairman</div>
-            <div class="officer-name">Patalinghug</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">P</div>
+            <div>
+              <div class="officer-role">Chairman</div>
+              <div class="officer-name">Patalinghug</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/patalinghug.jpg" alt="Patalinghug"></div>
+            <p><strong>Full Name:</strong> Denise M. Patalinghug</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
-        <div class="officer-card">
-          <div class="officer-avatar">G</div>
-          <div>
-            <div class="officer-role">Vice Chairman</div>
-            <div class="officer-name">Gerundio</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">G</div>
+            <div>
+              <div class="officer-role">Vice Chairman</div>
+              <div class="officer-name">Gerundio</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/gerundio.jpg" alt="Gerundio"></div>
+            <p><strong>Full Name:</strong> Rhian Ashlee S. Gerundio</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
       </div>
@@ -1642,18 +1945,42 @@
         <span class="committee-count">2 Officers</span>
       </div>
       <div class="officer-grid">
-        <div class="officer-card">
-          <div class="officer-avatar">P</div>
-          <div>
-            <div class="officer-role">Chairman</div>
-            <div class="officer-name">Potot</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">P</div>
+            <div>
+              <div class="officer-role">Chairman</div>
+              <div class="officer-name">Potot</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/potot.jpg" alt="Potot"></div>
+            <p><strong>Full Name:</strong> Pretzel Alliah B. Potot</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
-        <div class="officer-card">
-          <div class="officer-avatar">S</div>
-          <div>
-            <div class="officer-role">Vice Chairman</div>
-            <div class="officer-name">Soliva</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">S</div>
+            <div>
+              <div class="officer-role">Vice Chairman</div>
+              <div class="officer-name">Soliva</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/soliva.jpg" alt="Soliva"></div>
+            <p><strong>Full Name:</strong> Simon Miguel A. Soliva</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
       </div>
@@ -1665,18 +1992,42 @@
         <span class="committee-count">2 Officers</span>
       </div>
       <div class="officer-grid">
-        <div class="officer-card">
-          <div class="officer-avatar">B</div>
-          <div>
-            <div class="officer-role">Chairman</div>
-            <div class="officer-name">Baculi</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">B</div>
+            <div>
+              <div class="officer-role">Chairman</div>
+              <div class="officer-name">Baculi</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/baculi.jpg" alt="Baculi"></div>
+            <p><strong>Full Name:</strong> Mary Ace F. Baculi</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
-        <div class="officer-card">
-          <div class="officer-avatar">O</div>
-          <div>
-            <div class="officer-role">Vice Chairman</div>
-            <div class="officer-name">Obleanda</div>
+        <div class="officer-card" tabindex="0" role="button" aria-expanded="false">
+          <div class="officer-top">
+            <div class="officer-avatar">O</div>
+            <div>
+              <div class="officer-role">Vice Chairman</div>
+              <div class="officer-name">Obleanda</div>
+            </div>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/obleanda.jpg" alt="Obleanda"></div>
+            <p><strong>Full Name:</strong> Stephanie Gwen P. Obleanda</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
           </div>
         </div>
       </div>
@@ -1688,29 +2039,101 @@
         <span class="committee-count">6 Programs</span>
       </div>
       <div class="pio-list">
-        <div class="pio-row">
-          <span class="pio-program">CE</span>
-          <span class="pio-name">Palomares</span>
+        <div class="pio-row" tabindex="0" role="button" aria-expanded="false">
+          <div class="pio-top">
+            <span class="pio-program">CE</span>
+            <span class="pio-name">Palomares</span>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/palomares.jpg" alt="Palomares"></div>
+            <p><strong>Full Name:</strong> Usha Claire B. Palomares</p>
+            <p><strong>Course & Year:</strong> BSCE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="pio-row">
-          <span class="pio-program">BSME</span>
-          <span class="pio-name">Trocio</span>
+        <div class="pio-row" tabindex="0" role="button" aria-expanded="false">
+          <div class="pio-top">
+            <span class="pio-program">BSME</span>
+            <span class="pio-name">Trocio</span>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/trocio.jpg" alt="Trocio"></div>
+            <p><strong>Full Name:</strong> Dwayne John S. Trocio</p>
+            <p><strong>Course & Year:</strong> BSME - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="pio-row">
-          <span class="pio-program">BSECE</span>
-          <span class="pio-name">Sanopao</span>
+        <div class="pio-row" tabindex="0" role="button" aria-expanded="false">
+          <div class="pio-top">
+            <span class="pio-program">BSECE</span>
+            <span class="pio-name">Sanopao</span>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/sanopao.jpg" alt="Sanopao"></div>
+            <p><strong>Full Name:</strong> EJ Nielsen J. Sanopao</p>
+            <p><strong>Course & Year:</strong> BSECE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="pio-row">
-          <span class="pio-program">BSEE</span>
-          <span class="pio-name">Trasmil</span>
+        <div class="pio-row" tabindex="0" role="button" aria-expanded="false">
+          <div class="pio-top">
+            <span class="pio-program">BSEE</span>
+            <span class="pio-name">Trasmil</span>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/trasmil.jpg" alt="Trasmil"></div>
+            <p><strong>Full Name:</strong> Christopher James S. Trasmil</p>
+            <p><strong>Course & Year:</strong> BSEE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="pio-row">
-          <span class="pio-program">BSCPE</span>
-          <span class="pio-name">Ortega</span>
+        <div class="pio-row" tabindex="0" role="button" aria-expanded="false">
+          <div class="pio-top">
+            <span class="pio-program">BSCPE</span>
+            <span class="pio-name">Ortega</span>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/ortega.jpg" alt="Ortega"></div>
+            <p><strong>Full Name:</strong> Myrrdin Emrys O. Ortega</p>
+            <p><strong>Course & Year:</strong> BSECpE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
-        <div class="pio-row">
-          <span class="pio-program">BSIE</span>
-          <span class="pio-name">Melgar</span>
+        <div class="pio-row" tabindex="0" role="button" aria-expanded="false">
+          <div class="pio-top">
+            <span class="pio-program">BSIE</span>
+            <span class="pio-name">Melgar</span>
+            <svg class="officer-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+          </div>
+          <div class="officer-more">
+            <div class="officer-more-inner">
+            <div class="officer-photo-frame"><span class="officer-photo-fallback"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span><img class="officer-photo" onerror="this.style.display='none'" src="officers/melgar.jpg" alt="Melgar"></div>
+            <p><strong>Full Name:</strong> Earl Simon G. Melgar</p>
+            <p><strong>Course & Year:</strong> BSIE - 2</p>
+            <p><strong>Term:</strong> A.Y. 2026 &ndash; 2027</p>
+            <a href="https://www.facebook.com/USJREMS" class="officer-contact">Message EMS on Facebook &rarr;</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1726,7 +2149,7 @@
           <img src="EMSPHOTO.jpg" alt="Engineering Mathematical Society logo" class="brand-mark">
           <span>Engineering Mathematical Society</span>
         </div>
-        <p>A community of engineering students dedicated to exploring the beauty of mathematics and its real-world applications since 19-forgotten.</p>
+        <p>A community of engineering students dedicated to exploring the beauty of mathematics and its real-world applications.</p>
       </div>
       <div>
         <h5>Navigate</h5>
@@ -1818,6 +2241,28 @@
   calNext.addEventListener('click', () => goToCal(calIndex + 1));
 
   goToCal(0);
+
+  /* ===== Officer card expand/collapse ===== */
+  const officerCards = document.querySelectorAll('.officer-card, .exec-card, .pio-row');
+
+  function toggleOfficerCard(card){
+    const isOpen = card.classList.toggle('expanded');
+    card.setAttribute('aria-expanded', isOpen);
+  }
+
+  officerCards.forEach(card => {
+    card.addEventListener('click', () => toggleOfficerCard(card));
+    card.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        toggleOfficerCard(card);
+      }
+    });
+    const contactLink = card.querySelector('.officer-contact');
+    if(contactLink){
+      contactLink.addEventListener('click', (e) => e.stopPropagation());
+    }
+  });
 </script>
 
 </body>
