@@ -435,6 +435,7 @@
     border:1px solid var(--line);
     border-radius:12px;
     padding:28px 24px;
+    cursor:pointer;
     transition:transform .2s ease, box-shadow .2s ease;
   }
   .pack-card:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(20,35,80,0.09);}
@@ -938,6 +939,73 @@
     color:#5f6c8f;
   }
 
+  /* ================= STUDY PACK MODAL ================= */
+  .sp-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(5,11,31,0.6);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    padding:24px;
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  .sp-modal.open{display:flex;}
+  .sp-modal.show{opacity:1;}
+  .sp-modal-card{
+    position:relative;
+    background:var(--white);
+    border-radius:16px;
+    padding:40px 36px;
+    max-width:360px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 30px 70px rgba(5,11,31,0.35);
+    transform:scale(0.94);
+    transition:transform .25s ease;
+  }
+  .sp-modal.show .sp-modal-card{transform:scale(1);}
+  .sp-modal-icon{
+    width:56px;height:56px;
+    border-radius:50%;
+    background:#e4ecfe;
+    color:var(--blue-500);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 18px;
+  }
+  .sp-modal-card h3{
+    font-size:19px;
+    font-weight:700;
+    color:var(--ink);
+    margin-bottom:8px;
+  }
+  .sp-modal-card p{
+    font-size:13.5px;
+    color:var(--slate);
+    line-height:1.6;
+  }
+  .sp-modal-close{
+    position:absolute;
+    top:14px;right:14px;
+    width:32px;height:32px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--slate);
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .2s ease, color .2s ease;
+  }
+  .sp-modal-close:hover{background:var(--line);color:var(--ink);}
+
   /* ================= RESPONSIVE ================= */
   @media (max-width:980px){
     .hero-inner{grid-template-columns:1fr;text-align:center;}
@@ -1157,29 +1225,29 @@
     </div>
 
     <div class="pack-grid">
-      <div class="pack-card">
+      <div class="pack-card" tabindex="0" role="button">
         <div class="pack-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a2 2 0 0 1 2-2h11l3 3v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
         </div>
         <h3>Calculus I Pack</h3>
         <p>Differential calculus study pack.</p>
-        <a href="#" class="pack-download">Download PDF &rarr;</a>
+        <span class="pack-download">Download PDF &rarr;</span>
       </div>
-      <div class="pack-card">
+      <div class="pack-card" tabindex="0" role="button">
         <div class="pack-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17c3-8 6-8 9 0s6 8 9 0"/></svg>
         </div>
         <h3>Calculus II Pack</h3>
         <p>Integral calculus study pack.</p>
-        <a href="#" class="pack-download">Download PDF &rarr;</a>
+        <span class="pack-download">Download PDF &rarr;</span>
       </div>
-      <div class="pack-card">
+      <div class="pack-card" tabindex="0" role="button">
         <div class="pack-icon">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
         </div>
         <h3>Enhancement Pack</h3>
         <p>Basic algebra study pack.</p>
-        <a href="#" class="pack-download">Download PDF &rarr;</a>
+        <span class="pack-download">Download PDF &rarr;</span>
       </div>
     </div>
 
@@ -2175,6 +2243,17 @@
   </div>
 </footer>
 
+<div class="sp-modal" id="spModal">
+  <div class="sp-modal-card">
+    <button class="sp-modal-close" id="spModalClose" aria-label="Close">&times;</button>
+    <div class="sp-modal-icon">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><circle cx="12" cy="16" r="0.5" fill="currentColor"/></svg>
+    </div>
+    <h3>Available Soon</h3>
+    <p>This study pack is still being prepared by our officers. Check back soon!</p>
+  </div>
+</div>
+
 <script>
   const menuToggle = document.getElementById('menuToggle');
   const primaryNav = document.getElementById('primaryNav');
@@ -2262,6 +2341,41 @@
     if(contactLink){
       contactLink.addEventListener('click', (e) => e.stopPropagation());
     }
+  });
+
+  /* ===== Study pack "Available Soon" modal ===== */
+  const spModal = document.getElementById('spModal');
+  const spModalClose = document.getElementById('spModalClose');
+  const packCards = document.querySelectorAll('.pack-card');
+
+  function openSpModal(){
+    spModal.classList.add('open');
+    requestAnimationFrame(() => spModal.classList.add('show'));
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSpModal(){
+    spModal.classList.remove('show');
+    document.body.style.overflow = '';
+    setTimeout(() => spModal.classList.remove('open'), 250);
+  }
+
+  packCards.forEach(card => {
+    card.addEventListener('click', openSpModal);
+    card.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        openSpModal();
+      }
+    });
+  });
+
+  spModalClose.addEventListener('click', closeSpModal);
+  spModal.addEventListener('click', (e) => {
+    if(e.target === spModal) closeSpModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && spModal.classList.contains('open')) closeSpModal();
   });
 </script>
 
